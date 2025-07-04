@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h1>📊 Admin Dashboard – Scan History</h1>
+  <a href="/">← Back to Scanner</a>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Input</th>
+        <th>Result</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for scan in scans %}
+      <tr>
+        <td>{{ scan.type }}</td>
+        <td>{{ scan.input[:60] }}...</td>
+        <td>{{ scan.final_result or scan.result }}</td>
+        <td>{{ scan.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

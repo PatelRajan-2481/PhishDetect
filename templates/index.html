@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phishing Detector</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; }
+    input, textarea, button { width: 100%; margin-top: 10px; padding: 10px; }
+    .result { margin-top: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🔐 Phishing Detector</h1>
+
+  <h3>Scan a URL</h3>
+  <input type="text" id="urlInput" placeholder="Enter URL here...">
+  <button onclick="scanURL()">Scan URL</button>
+
+  <h3>Or Scan Email Content</h3>
+  <textarea id="emailInput" rows="6" placeholder="Paste email body here..."></textarea>
+  <button onclick="scanEmail()">Scan Email</button>
+
+<h3>Scan History</h3>
+<button onclick="loadHistory()">📄 Load History</button>
+<ul id="historyList"></ul>
+
+
+  <div class="result" id="resultBox"></div>
+
+ 
+<script>
+  async function scanURL() {
+    const url = document.getElementById('urlInput').value;
+    const res = await fetch('/scan/url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+
+    const data = await res.json();
+    let message = `Result: ${data.final_result} (Rule-based: ${data.rule_based_result}, VirusTotal: ${data.virustotal_result})`;
+
+    if (data.final_result === "Malicious") {
+      message += `\n⚠️ This link appears **malicious**.\n🚫 Please avoid clicking and verify it with the original source.`;
+    }
+
+    document.getElementById('resultBox').innerText = message;
+  }
+
+const resultBox = document.getElementById('resultBox');
+resultBox.innerText = message;
+
+if (data.final_result === "Malicious") {
+  resultBox.style.color = "red";
+} else if (data.final_result === "Suspicious") {
+  resultBox.style.color = "orange";
+} else {
+  resultBox.style.color = "green";
+}
+
+
+async function loadHistory() {
+  const res = await fetch('/history');
+  const data = await res.json();
+
+  const list = document.getElementById('historyList');
+  list.innerHTML = ""; // Clear previous
+
+  if (data.length === 0) {
+    list.innerHTML = "<li>No scans found.</li>";
+    return;
+  }
+
+  data.reverse().forEach(entry => {
+    const li = document.createElement('li');
+    const type = entry.type.toUpperCase();
+    const input = (entry.input.length > 80) ? entry.input.slice(0, 80) + "..." : entry.input;
+    const result = entry.final_result || entry.result;
+    li.innerText = `[${type}] ${result} — ${input}`;
+    list.appendChild(li);
+  });
+}
+
+  </script>
+
+
+</body>
+</html>
