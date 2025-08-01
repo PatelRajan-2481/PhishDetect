@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mb-4">
+  <h2 class="fw-bold text-dark">
+    🗃️ Scan History
+  </h2>
+  <p class="text-muted small">Latest scan logs from both URLs and email content</p>
+</div>
+
+
+<div class="table-responsive">
+  <table id="historyTable" class="table table-bordered table-hover shadow-sm bg-white rounded">
+    <thead class="table-light">
+      <tr>
+        <th>Type</th>
+        <th>Result</th>
+        <th>Preview</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in scans %}
+      <tr>
+        <td>
+          <span class="badge bg-secondary text-capitalize">{{ s.type }}</span>
+        </td>
+        <td>
+          {% set r = s.final_result or s.result %}
+          {% if r == 'Safe' %}
+            <span class="badge bg-success">{{ r }}</span>
+          {% elif r == 'Suspicious' %}
+            <span class="badge bg-warning text-dark">{{ r }}</span>
+          {% else %}
+            <span class="badge bg-danger">{{ r }}</span>
+          {% endif %}
+        </td>
+        <td>{{ s.input[:60] }}{% if s.input|length > 60 %}…{% endif %}</td>
+        <td><span class="text-muted small">{{ s.timestamp }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
