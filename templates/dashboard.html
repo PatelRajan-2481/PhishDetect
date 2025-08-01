@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-4 ps-2">
+  <h2 class="fw-bold text-dark">
+    📊 Admin Dashboard
+  </h2>
+</div>
+
+
+  <!-- Analytics -->
+  <div class="row my-4">
+    <div class="col-md-10 d-flex justify-content-center">
+      <div class="card shadow-sm p-3 w-100">
+        <canvas id="scanChart" style="max-height: 300px;"></canvas>
+      </div>
+    </div>
+    <div class="col-md-2 d-flex align-items-center justify-content-center">
+      <button class="btn btn-outline-secondary w-100" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <table id="adminTable" class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Type</th>
+            <th>Result</th>
+            <th>Preview</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in scans %}
+          <tr>
+            <td>{{ s.type }}</td>
+            <td>
+              <span class="badge 
+                {% if s.final_result == 'Safe' %}bg-success
+                {% elif s.final_result == 'Suspicious' %}bg-warning text-dark
+                {% elif s.final_result == 'Malicious' %}bg-danger
+                {% else %}bg-secondary{% endif %}">
+                {{ s.final_result or s.result }}
+              </span>
+            </td>
+            <td>{{ (s.input[:60] + '...') if s.input|length > 60 else s.input }}</td>
+            <td><small class="text-muted">{{ s.timestamp }}</small></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <!-- jQuery + DataTables -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    const scans = {{ scans|tojson }};
+
+    // Initialize DataTable
+    $(document).ready(function() {
+      $('#adminTable').DataTable({ order: [[3, 'desc']], pageLength: 10 });
+    });
+
+    // Render donut chart
+    const counts = { Safe: 0, Suspicious: 0, Malicious: 0 };
+    scans.forEach(s => {
+      const r = s.final_result || s.result;
+      counts[r] = (counts[r] || 0) + 1;
+    });
+
+    new Chart(document.getElementById('scanChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Safe', 'Suspicious', 'Malicious'],
+        datasets: [{
+          data: [counts.Safe, counts.Suspicious, counts.Malicious],
+          backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+
+    // CSV export functionality
+    function exportCSV() {
+      const rows = [['Type', 'Result', 'Preview', 'Timestamp']]
+        .concat(scans.map(s => [s.type, s.final_result || s.result, s.input, s.timestamp]));
+      const csv = rows.map(r => r.map(f => `"${f.replace(/"/g, '""')}` ).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'scan_history.csv';
+      a.click();
+    }
+  </script>
+{% endblock %}
