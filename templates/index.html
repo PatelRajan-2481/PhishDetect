@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="hero-banner mb-5 text-white rounded text-center shadow-lg">
+  <h1 class="display-5 fw-bold">     
+
+       </h1>
+ 
+</div>
+
+<div class="row g-4">
+  <div class="col-md-6">
+    <h4>🔗 Scan a URL</h4>
+    <input id="urlInput" class="form-control" placeholder="e.g., https://example.com/login">
+    <button class="btn btn-primary mt-2" onclick="scanURL()">Scan URL</button>
+  </div>
+
+  <div class="col-md-6">
+    <h4>📩 Scan Email Body</h4>
+    <textarea id="emailInput" class="form-control" rows="5" placeholder="Paste email text..."></textarea>
+    <button class="btn btn-success mt-2" onclick="scanEmail()">Scan Email</button>
+  </div>
+</div>
+
+<div id="loadingPanel" class="alert alert-info text-center mt-4" style="display:none;">
+  ⏳ Scanning... please wait
+</div>
+
+<div id="resultBox" class="alert alert-secondary mt-3" style="display: none;"></div>
+
+<div class="mt-5">
+  <h5 class="fw-bold mb-3">🧭 Result Legend</h5>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="card border-success shadow-sm">
+        <div class="card-body py-2 px-3">
+          <span class="badge bg-success">Safe</span>
+          <p class="mb-0 mt-1 text-muted small">No suspicious activity detected.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-warning shadow-sm">
+        <div class="card-body py-2 px-3">
+          <span class="badge bg-warning text-dark">Suspicious</span>
+          <p class="mb-0 mt-1 text-muted small">Potential phishing detected by pattern.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card border-danger shadow-sm">
+        <div class="card-body py-2 px-3">
+          <span class="badge bg-danger">Malicious</span>
+          <p class="mb-0 mt-1 text-muted small">Likely phishing confirmed by ML or VirusTotal.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

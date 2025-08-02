@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: phishdetect
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: 72c6232a94893d04bdc159ecdcc1a0b24f4980b7bd9f929a67422f8112fbbb8e
+        sync: false
