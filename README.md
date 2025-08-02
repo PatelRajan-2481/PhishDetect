@@ -45,21 +45,6 @@ PhishDetect is an intelligent web-based phishing detection tool that uses a hybr
 
 ## 🔍 Architecture Diagram
 
-```plaintext
-+------------------+       +------------------+      +----------------+
-|  User Browser    | <---> |  Flask Backend   | <--->|  ML Classifier |
-| (URL/Email Input)|       | (PhishDetect App)|      | & Rule Engine  |
-+------------------+       +------------------+      +----------------+
-          |                         |
-          |                         v
-          |              +------------------+
-          |              | VirusTotal API   |
-          |              +------------------+
-          |
-          v
-+------------------+      +------------------+
-| AWS Cognito Auth |      | AWS S3 (Logs)    |
-+------------------+      +------------------+
-                             |
-                             v
-                     Email Notification (SES)
+![🔍Architecture Diagram](https://github.com/PatelRajan-2481/PhishDetect/blob/main/Architecture%20Diagram.png)
+
+
