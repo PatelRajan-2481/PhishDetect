@@ -47,4 +47,52 @@ PhishDetect is an intelligent web-based phishing detection tool that uses a hybr
 
 ![🔍Architecture Diagram](https://github.com/PatelRajan-2481/PhishDetect/blob/main/Architecture%20Diagram.png)
 
+## 🚀 Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/PatelRajan-2481/phishdetect.git
+cd phishing-backend
+```
+### 2. Create & Activate Virtual Environment
+```bash
+python -m venv venv
+# For Linux/macOS:
+source venv/bin/activate
+# For Windows:
+venv\Scripts\activate
+
+```
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 4. Create Configuration
+Create a file named config.py in the root directory with the following contents:
+```python
+VT_API_KEY = "your_virustotal_api_key"
+
+AWS_REGION = "us-east-1"
+COGNITO_USER_POOL_ID = "your_user_pool_id"
+COGNITO_CLIENT_ID = "your_client_id"
+S3_BUCKET_NAME = "your_s3_bucket_name"
+
+SES_SENDER = "verified_sender@example.com"
+SES_RECIPIENT = "your_email@example.com"
+```
+
+Make sure:
+- The VT_API_KEY is valid from VirusTotal API.
+- Your SES emails are verified.
+- Your IAM role has access to S3 and SES.
+
+### 5. Run the App Locally
+```bash
+python app.py
+```
+Then open http://127.0.0.1:5000 in your browser.
+
+Note: You must log in first (via Cognito) to access the dashboard.
+
 
